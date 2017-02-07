@@ -75,17 +75,6 @@ public class CommonAPI {
         this.resolution = resolution;
 
         driver = DriverFactory.getInstance().getDriver();
-//
-//        if(useCloudEnv==true){
-//            //run in cloud
-//            getCloudDriver(cloudEnv,os,browserName,browserVersion,testName,os_version,resolution);
-//
-//        }else{
-//            //run in local
-//            driver = DriverFactory.getInstance().getDriver();
-////            getLocalDriver(os, browserName);
-//
-//        }
 
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(35, TimeUnit.SECONDS);
@@ -95,70 +84,11 @@ public class CommonAPI {
 
     }
 
-    public WebDriver getLocalDriver(@Optional("mac") String OS,String browserName){
-        if(browserName.equalsIgnoreCase("chrome")){
-            if(OS.equalsIgnoreCase("Mac")){
-                System.setProperty("webdriver.chrome.driver", "../Generic/driver/chromedriver");
-            }else if(OS.equalsIgnoreCase("Win")){
-                System.setProperty("webdriver.chrome.driver", "../Generic/driver/chromedriver.exe");
-            }
-            driver = new ChromeDriver();
-        }else if(browserName.equalsIgnoreCase("firefox")){
-            if(OS.equalsIgnoreCase("Mac")){
-                System.setProperty("webdriver.gecko.driver", "../Generic/driver/geckodriver");
-            }else if(OS.equalsIgnoreCase("Win")) {
-                System.setProperty("webdriver.gecko.driver", "../Generic/driver/geckodriver.exe");
-            }
-            driver = new FirefoxDriver();
-
-        } else if(browserName.equalsIgnoreCase("ie")) {
-            System.setProperty("webdriver.ie.driver", "../Generic/driver/IEDriverServer.exe");
-            driver = new InternetExplorerDriver();
-        }
-        return driver;
-
-    }
-    public WebDriver getLocalGridDriver(String browserName) {
-        if (browserName.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "../Generic/driver/chromedriver");
-            driver = new ChromeDriver();
-        } else if (browserName.equalsIgnoreCase("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "../Generic/driver/geckodriver");
-            driver = new FirefoxDriver();
-        } else if (browserName.equalsIgnoreCase("ie")) {
-            System.setProperty("webdriver.ie.driver", "../Generic/browser-driver/IEDriverServer.exe");
-            driver = new InternetExplorerDriver();
-        }
-        return driver;
-    }
-
-    public WebDriver getCloudDriver(String env,String os, String browserName,
-                                    String browserVersion, String testName, String os_version,String resolution)throws IOException {
-
-        DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("platform", os);
-        cap.setBrowserName(browserName);
-        cap.setCapability("version",browserVersion);
-        cap.setCapability("os", os);
-        if(env.equalsIgnoreCase("Saucelabs")){
-            cap.setCapability("name", testName);
-            driver = new RemoteWebDriver(new URL("http://"+SAUCE_USERNAME+":"+SAUCE_ACCESS_KEY+
-                    "@ondemand.saucelabs.com:80/wd/hub"), cap);
-        }else if(env.equalsIgnoreCase("Browserstack")) {
-            cap.setCapability("os_version", os_version);
-            cap.setCapability("resolution", resolution);
-            driver = new RemoteWebDriver(new URL("http://" + BROWSERSTACK_USERNAME + ":" + BROWSERSTACK_ACCESS_KEY +
-                    "@hub-cloud.browserstack.com/wd/hub"), cap);
-        }
-        return driver;
-    }
 
 
     @AfterMethod
     public void tearDown() throws Exception {
         DriverFactory.getInstance().removeDriver();
-//        driver.quit();
-//        driver = null;
     }
 
     public void clickByCss(String locator) {
